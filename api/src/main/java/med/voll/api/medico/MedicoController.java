@@ -17,14 +17,22 @@ public class MedicoController {
     @Autowired
     private MedicoRepository repository;
 
-    @PostMapping
+    @PostMapping //Create
     @Transactional
     public void cadastrar(@RequestBody @Valid DadosCadastroMedico dados){
         repository.save(new Medico(dados));
     }
 
-    @GetMapping
+    @GetMapping // Read
     public Page<DadosListagemMedico> listar(@PageableDefault(size=10, sort = {"nome"}) Pageable paginacao){
         return repository.findAll(paginacao).map(DadosListagemMedico::new);
+    }
+
+    @PutMapping //Update
+    @Transactional
+    public void atualizar(@RequestBody @Valid DadosAtualizacaoMedico dados){
+        var medico = repository.getReferenceById(dados.id());
+        medico.atualizarInformacoes(dados);
+
     }
 }
